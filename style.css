@@ -1,0 +1,85 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background: #050810;
+  color: #fff;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.score {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.boxer-area {
+  position: relative;
+  width: 320px;     /* Чуть шире для комфортного расстояния */
+  height: 300px;
+  display: flex;
+  justify-content: space-between; /* Распределяет боксера и грушу */
+  align-items: flex-end; /* Выровнять их по низу */
+  padding: 0 10px;
+}
+
+.boxer-area img {
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.punch-button {
+  padding: 12px 24px;
+  font-size: 18px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(90deg, #ff4d4d, #ff9a3c);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(255, 77, 77, 0.4);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.punch-button:active {
+  transform: scale(0.96);
+  box-shadow: 0 3px 8px rgba(255, 77, 77, 0.5);
+}
+
+/* Простая анимация удара груши */
+.bag-hit {
+  animation: bagHit 0.15s ease-out;
+}
+
+@keyframes bagHit {
+  0% { transform: translateX(0); }
+  40% { transform: translateX(-8px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
