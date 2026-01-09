@@ -8,25 +8,30 @@
   <link rel="stylesheet" href="style.css" />
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="app">
-    <header class="header">
-      <h1>🥊 Boxer Clicker</h1>
-      <div class="score">
-        Очки: <span id="score">0</span>
-      </div>
-    </header>
+    <header class="top-bar">
+  <div class="title">
+    BOXER GAME
+  </div>
+
+  <div class="score-box">
+    <span class="score-label">Очки</span>
+    <span id="score" class="score-value">0</span>
+  </div>
+</header>
 
     <main class="game-area">
-      <div class="boxer-area">
-        <img id="boxer" src="boxer_idle.png" alt="Boxer" />
-        <img id="bag" src="punch_bag.png" alt="Punch Bag" />
-      </div>
-      <button id="punchButton" class="punch-button">
-        Ударить грушу
-      </button>
-    </main>
+  <div class="boxer-area">
+    <img id="boxer" src="assets/boxer_idle.png" />
+    <div id="bagWrap" class="bag-wrap">
+  <img id="bag" src="assets/bag.png" />
+</div>
+    <div id="fxLayer" class="fx-layer"></div>
   </div>
 
   <script src="main.js"></script>
