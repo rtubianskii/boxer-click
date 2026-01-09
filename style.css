@@ -13,7 +13,7 @@
 
 body {
   color: #fff;
-  background-image: url("assets/bg.jpg"); /* если у тебя bg.png — поменяй */
+  background-image: url("bg.jpg"); /* если у тебя bg.png — поменяй */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -269,4 +269,5 @@ body {
   50%  { transform: scale(1.15); }
   100% { transform: scale(1); }
 }
+
 
