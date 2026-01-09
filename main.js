@@ -1,58 +1,87 @@
 const tg = window.Telegram?.WebApp;
 
+let score = 0;
+let punchPower = 1;
+
+const BOXER_IDLE_SRC = "assets/boxer_idle.png";
+const BOXER_PUNCH_SRC = "assets/boxer_punch.png";
+const BAG_SRC = "assets/bag.png";
+const BG_SRC = "assets/bg.jpg"; // если фон bg.png — поменяй
+
+function preloadImages(urls) {
+  urls.forEach((u) => {
+    const img = new Image();
+    img.src = u;
+  });
+}
+
+preloadImages([BOXER_IDLE_SRC, BOXER_PUNCH_SRC, BAG_SRC, BG_SRC]);
+
 if (tg) {
   tg.ready();
   tg.expand();
 }
 
-let score = 0;
-let punchPower = 1;
-
-const BOXER_IDLE_SRC = "boxer_idle.png";
-const BOXER_PUNCH_SRC = "boxer_punch.png";
-
 const scoreEl = document.getElementById("score");
-const bagEl = document.getElementById("bag");
 const boxerEl = document.getElementById("boxer");
+const bagEl = document.getElementById("bag");
 const fxLayer = document.getElementById("fxLayer");
+const punchButton = document.getElementById("punchButton"); // может быть null
 
-// кнопку можно оставить как запасной вариант
-const punchButton = document.getElementById("punchButton");
+// NEW: элементы для эффектов (могут быть null, если ещё не добавил wrapper)
+const sceneEl = document.querySelector(".boxer-area");
+const bagWrapEl = document.getElementById("bagWrap");
 
 function updateScore() {
   scoreEl.textContent = String(score);
+
+  scoreEl.classList.remove("bump");
+  void scoreEl.offsetWidth;
+  scoreEl.classList.add("bump");
 }
 
 function haptic(type = "light") {
-  // Telegram haptics (работает в поддерживаемых клиентах)
   const hf = tg?.HapticFeedback;
   if (!hf) return;
-
-  // impactOccurred: "light" | "medium" | "heavy" | "rigid" | "soft"
-  // notificationOccurred: "success" | "warning" | "error"
-  // selectionChanged: без параметров
   if (type === "selection") hf.selectionChanged();
   else hf.impactOccurred(type);
 }
 
 function animatePunch() {
-  boxerEl.src = BOXER_PUNCH_SRC;
+  if (boxerEl) boxerEl.src = BOXER_PUNCH_SRC;
 
-  bagEl.classList.remove("bag-hit");
-  void bagEl.offsetWidth;
-  bagEl.classList.add("bag-hit");
+  // shake камеры
+  if (sceneEl) {
+    sceneEl.classList.remove("shake");
+    void sceneEl.offsetWidth;
+    sceneEl.classList.add("shake");
+  }
+
+  // squash груши (если есть wrapper)
+  if (bagWrapEl) {
+    bagWrapEl.classList.remove("squash");
+    void bagWrapEl.offsetWidth;
+    bagWrapEl.classList.add("squash");
+  }
+
+  // отдача груши (на img)
+  if (bagEl) {
+    bagEl.classList.remove("bag-hit");
+    void bagEl.offsetWidth;
+    bagEl.classList.add("bag-hit");
+  }
 
   setTimeout(() => {
-    boxerEl.src = BOXER_IDLE_SRC;
+    if (boxerEl) boxerEl.src = BOXER_IDLE_SRC;
   }, 150);
 }
 
 function spawnFloatingPoints(points) {
-  // координаты груши относительно экрана
+  if (!fxLayer || !bagEl) return;
+
   const bagRect = bagEl.getBoundingClientRect();
   const fxRect = fxLayer.getBoundingClientRect();
 
-  // точка появления: примерно по центру груши, чуть выше низа
   const x = (bagRect.left + bagRect.width * 0.55) - fxRect.left;
   const y = (bagRect.top + bagRect.height * 0.35) - fxRect.top;
 
@@ -60,16 +89,13 @@ function spawnFloatingPoints(points) {
   el.className = "floating-points";
   el.textContent = `+${points}`;
 
-  // небольшая случайность, чтобы красиво “сыпалось”
-  const jitterX = (Math.random() * 16) - 8; // -8..+8
+  const jitterX = (Math.random() * 16) - 8;
   const jitterY = (Math.random() * 10) - 5;
 
   el.style.left = `${x + jitterX}px`;
   el.style.top = `${y + jitterY}px`;
 
   fxLayer.appendChild(el);
-
-  // удалить после анимации
   setTimeout(() => el.remove(), 650);
 }
 
@@ -81,17 +107,20 @@ function onPunch() {
   haptic("light");
 }
 
-// Тап по груше
-bagEl.addEventListener("click", onPunch);
+// Клик по груше: если есть wrapper — кликаем по нему, иначе по img
+const bagClickTarget = bagWrapEl || bagEl;
 
-// Запасной вариант: кнопка (можешь потом убрать)
-if (punchButton) punchButton.addEventListener("click", onPunch);
+if (!bagClickTarget) {
+  console.error("Не найден элемент груши (#bagWrap или #bag) — проверь HTML");
+} else {
+  bagClickTarget.addEventListener("click", onPunch);
+  console.log("OK: bag click handler attached");
+}
 
-// На мобилках иногда приятнее откликаться на pointerdown
-bagEl.addEventListener("pointerdown", (e) => {
-  // предотвращаем двойные события на некоторых устройствах
-  // если заметишь двойной подсчёт — скажи, подстроим
-});
+// Кнопка опционально
+if (punchButton) {
+  punchButton.addEventListener("click", onPunch);
+}
 
 if (tg) {
   console.log("Telegram WebApp init data:", tg.initDataUnsafe);
