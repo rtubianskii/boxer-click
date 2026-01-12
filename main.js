@@ -34,7 +34,7 @@ const LAST_PAGE_KEY = "boxer_clicker_page";
 /* =========================
    CONFIG
 ========================= */
-const CHANNEL_USERNAME = "your_channel_username"; // <-- ЗАМЕНИ (без @)
+const CHANNEL_USERNAME = "v_sporti"; // <-- ЗАМЕНИ (без @)
 const SUB_TASK_REWARD = 100;
 
 const DAILY_REWARD = 250;
@@ -631,3 +631,4 @@ window.addEventListener("beforeunload", () => {
   saveTasks();
   savePrizes();
 });
+
