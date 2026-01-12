@@ -2,38 +2,173 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Boxer Clicker</title>
+  <title>Boxer Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Подключим стили -->
+
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
+
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
+
 <body>
   <div id="app">
+
+    <!-- =======================
+         TOP BAR
+    ======================== -->
     <header class="top-bar">
-  <div class="title">
-    BOXER GAME
+      <div class="title">BOXER GAME</div>
+
+      <div class="score-box">
+        <span class="score-label">Очки</span>
+        <span id="score" class="score-value">0</span>
+      </div>
+    </header>
+
+    <!-- =======================
+         PAGES
+    ======================== -->
+    <main class="pages">
+
+      <!-- ===== PAGE: GAME ===== -->
+      <section id="pageGame" class="page active">
+        <div class="game-area">
+          <div class="boxer-area">
+
+            <img
+              id="boxer"
+              src="assets/boxer_idle.png"
+              alt="Boxer"
+              draggable="false"
+            />
+
+            <div id="bagWrap" class="bag-wrap">
+              <img
+                id="bag"
+                src="assets/bag.png"
+                alt="Punch bag"
+                draggable="false"
+              />
+            </div>
+
+            <div id="fxLayer" class="fx-layer"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PAGE: TASKS ===== -->
+      <section id="pageTasks" class="page">
+        <div class="tasks-page">
+
+          <div class="tasks-title">Задания</div>
+
+          <!-- Daily bonus -->
+          <div class="task-row">
+            <div class="task-info">
+              <div class="task-name">
+                Ежедневный бонус
+                <span id="dailyBadge" class="badge hidden">ДОСТУПНО</span>
+              </div>
+              <div class="task-desc">+250 очков</div>
+              <div class="task-meta" id="dailyStatus">Статус: доступно</div>
+            </div>
+
+            <div class="task-actions">
+              <button id="claimDaily" class="task-btn">Получить</button>
+            </div>
+          </div>
+
+          <!-- Subscribe task -->
+          <div class="task-row">
+            <div class="task-info">
+              <div class="task-name">Подпишись на канал</div>
+              <div class="task-desc">+100 очков</div>
+              <div class="task-meta" id="subStatus">Статус: не выполнено</div>
+            </div>
+
+            <div class="task-actions">
+              <button id="openChannel" class="task-btn secondary">Открыть</button>
+              <button id="claimSub" class="task-btn">Получить</button>
+            </div>
+          </div>
+
+          <!-- Raffle -->
+          <div class="task-row">
+            <div class="task-info">
+              <div class="task-name">
+                Розыгрыш призов
+                <span id="raffleBadge" class="badge hidden">БИЛЕТЫ</span>
+              </div>
+              <div class="task-desc">1 билет за каждые 1000 очков</div>
+              <div class="task-meta" id="raffleStatus">Билетов: 0</div>
+            </div>
+
+            <div class="task-actions">
+              <button id="openRaffle" class="task-btn">Открыть</button>
+            </div>
+          </div>
+
+          <!-- Prizes -->
+          <div class="tasks-title">Мои призы</div>
+          <div id="prizesList" class="prizes-list"></div>
+
+          <div class="tasks-hint">
+            Очки и задания сохраняются автоматически.
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- =======================
+         BOTTOM NAV
+    ======================== -->
+    <nav class="bottom-nav">
+      <button id="tabGame" class="tab active">
+        <span class="tab-ico">🥊</span>
+        <span class="tab-txt">Игра</span>
+      </button>
+
+      <button id="tabTasks" class="tab">
+        <span class="tab-ico">📋</span>
+        <span class="tab-txt">Задания</span>
+      </button>
+    </nav>
+
+    <!-- =======================
+         WHEEL MODAL
+    ======================== -->
+    <div id="wheelModal" class="modal hidden">
+      <div class="modal-card wheel-card">
+        <div class="modal-header">
+          <div class="modal-title">Колесо фортуны</div>
+          <button id="closeWheel" class="icon-btn">✕</button>
+        </div>
+
+        <div class="wheel-wrap">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheelCanvas" width="320" height="320"></canvas>
+        </div>
+
+        <div class="wheel-meta">
+          <div id="wheelTickets" class="wheel-tickets">Билетов: 0</div>
+          <button id="spinWheel" class="task-btn">Крутить</button>
+          <div id="wheelResult" class="wheel-result"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="score-box">
-    <span class="score-label">Очки</span>
-    <span id="score" class="score-value">0</span>
-  </div>
-</header>
-
-    <main class="game-area">
-  <div class="boxer-area">
-    <img id="boxer" src="assets/boxer_idle.png" />
-    <div id="bagWrap" class="bag-wrap">
-  <img id="bag" src="assets/bag.png" />
-</div>
-    <div id="fxLayer" class="fx-layer"></div>
-  </div>
-
+  <!-- Script -->
   <script src="main.js"></script>
 </body>
-</html>
+</html
